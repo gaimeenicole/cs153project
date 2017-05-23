@@ -23,6 +23,23 @@ def copyList(A):
         copy.append(A[i])
     return copy
 
+def getLastIndex(list):
+    ind = 0
+    for i in range(len(list)):
+        if list[i] == 1:
+            ind = i
+    return ind
+def printList (list):
+    lastIndex = getLastIndex(list)
+    for i in range(len(list)):
+        if list[i] == 1:
+            if (i != len(list)-1):
+                print "x^"+str(((-i-1)%(len(list)+1))-1),
+            else:
+                print str(1),
+            if i != lastIndex:
+                print "+",
+
 def additionWithPrint(A,B,op):
     result = []
     A = reverse(A)
@@ -119,7 +136,7 @@ def addSupplement(A, B):
         result.append(A[len(B)+u])
     return result
 
-def plainmult(A, B):
+def plainmult(A, B, mode):
     #max = len(A)+len(B)+1
     a = reverse(A)
     b = reverse(B)
@@ -135,64 +152,68 @@ def plainmult(A, B):
     Aa = expandList(m, A)
     Bb = expandList(m, B)
     row = []
-    for x in range(len(Aa)):
-        if Aa[x] == -1:
-            print " ",
-        else:
-            print Aa[x],
-    print
-    Bb[0] = "x"
-    for x in range(len(Bb)):
-        if Bb[x] == -1:
-            print " ",
-        else:
-            print Bb[x],
-    print
-    for x in xrange(2*m+1):
-        print "_",
-    print
+    if mode != "div":
+        for x in range(len(Aa)):
+            if Aa[x] == -1:
+                print " ",
+            else:
+                print Aa[x],
+        print
+        Bb[0] = "x"
+        for x in range(len(Bb)):
+            if Bb[x] == -1:
+                print " ",
+            else:
+                print Bb[x],
+        print
+        for x in xrange(2*m+1):
+            print "_",
+        print
     a = reverse(A)
     b = reverse(B)
     for i in range(len(b)):
         for j in range(len(a)):
             row.append(a[j] * b[i])
         row = reverse(row)
-        row += i*[-1]
-        row = expandList(m, row)
-        if (i==len(b)-1):
-            row[0] = "+"
-        for x in range(len(row)):
-            if row[x] == -1:
+        if mode != "div":
+            row += i*[-1]
+            row = expandList(m, row)
+            if (i==len(b)-1):
+                row[0] = "+"
+            for x in range(len(row)):
+                if row[x] == -1:
+                    print " ",
+                else:
+                    print row[x],
+            print
+        row = []
+    if mode != "div":
+        for x in xrange(2*m+1):
+            print "_",
+        print
+        pr = expandList(m, prod)
+        for x in range(len(pr)):
+            if pr[x] == -1:
                 print " ",
             else:
-                print row[x],
+                print pr[x],
         print
-        row = []
-    for x in xrange(2*m+1):
-        print "_",
-    print
-    pr = expandList(m, prod)
-    for x in range(len(pr)):
-        if pr[x] == -1:
-            print " ",
-        else:
-            print pr[x],
-    print
     return prod
 
-def multiplication(A, B):
+def multiplication(A, B, mode):
     '''prod = []
     if len(A) < len(B):
         prod = plainmult(B, A)
     else:'''
-    prod = plainmult(A, B)
+    prod = plainmult(A, B, mode)
     diff = len(prod) - len(P)
     if (diff < 0):
         return prod
     else:
-        print "\nSince the degree of the product", prod, "is greater than or equal to the degree of the irreducible polynomial", P, ", modulo reduction is needed. Using the irreducible polynomial,\n"
+        print "\nSince the degree of the product", printList(prod), "is greater than or equal to the degree of the irreducible polynomial", printList(P), ", modulo reduction is needed. Using the irreducible polynomial,\n"
         prod = multModulo(prod, P)
-
+        print "The final answer is:",
+        printList(prod)
         return prod
 
 def multModulo(prod, P):
@@ -201,24 +222,23 @@ def multModulo(prod, P):
     diff = len(prod) - len(P)
     coeffs = []
     qDegree = getDegree1(P)
-    print "x^"+ str(len(P)-1), "="
     for i in xrange(diff+1):
         prodcopy[i] = 0
         coeffs.append(prod[i])
     coeffs = reverse(coeffs)
-    for x in range(len(coeffs)):
-        print x, coeffs[x]
+
     for i in range(len(coeffs)):
-        #print "x ^", len(prod) - 1 - i, "=",
         if coeffs[i] == 1:
             temp2 = [0 for x in xrange(qDegree+i+1)]
             temp1 = simplifyList(qDegree, P)
-            print temp1
+            print "x^"+str(getDegree2(P) + i), "=",
             for j in range(len(temp1)):
                 pos = (j - i ) % len(temp1)
-                temp2[pos] = temp1[j]
-            print temp2
+                temp2[j] = temp1[j]
+            printList(temp2)
+            print
             prodcopy = addition(prodcopy, temp2)
+    print "\nWe substitute the equations above to the original product and perform usual addition. \n"
     prodDeg = getDegree1(prodcopy)
     prodcopy = simplifyList(prodDeg, prodcopy)
     return prodcopy
@@ -229,6 +249,7 @@ def division(P, B):
     V = [0]
     U = [1]
     while getDegree2(R) != 0:
+        print
         delta = getDegree2(S) - getDegree2(R)
         if (delta < 0):
             temp = copyList(S)
@@ -238,27 +259,42 @@ def division(P, B):
             V = copyList(U)
             U = copyList(temp)
             delta = -(delta)
+        print "R(x) = ",
+        printList(R)
+        print
+        print "S(x) =",
+        printList(S)
+        print
+        print "U(x) = ",
+        printList(U)
+        print
+        print "V(x) = ",
+        printList(V)
+        print
+
         xRaisedToDelta = [0 for x in xrange(delta+1)]
         xRaisedToDelta[0] = 1
-        prod = plainmult(xRaisedToDelta, R)
+        prod = plainmult(xRaisedToDelta, R, "div")
         summ = addition(S, prod)
         S = simplifyList(getDegree2(summ), summ)
-        prod = plainmult(xRaisedToDelta, U)
+        prod = plainmult(xRaisedToDelta, U, "div")
         summ = addition(V, prod)
         V = simplifyList(getDegree2(summ), summ)
-    return multiplication(A, U)
-
-A = raw_input("A(x): ")
-B = raw_input("B(x): ")
-P = raw_input("P(x): ")
-
-A = A.split()
-B = B.split()
-P = P.split()
-
-A = simplifyList(getDegree2([int(a) for a in A]), [int(a) for a in A])
-B = simplifyList(getDegree2([int(b) for b in B]), [int(b) for b in B])
-P = simplifyList(getDegree2([int(p) for p in P]), [int(p) for p in P])
+    print
+    print "R(x) = ",
+    printList(R)
+    print
+    print "S(x) =",
+    printList(S)
+    print
+    print "U(x) = ",
+    printList(U)
+    print
+    print "V(x) = ",
+    printList(V)
+    print
+    print "\nThe inverse of", printList(B), "is", printList(U), ". Then, we multiply the inverse to A, which is,", printList(A), "."
+    return multiplication(A, U, "mult")
 
 def getMaxLength(A, B, r):
     maxLength = 0
@@ -278,12 +314,38 @@ def expandList(max, list):
         expanded[(2*x)+(2*(max-len(list)+1))] = l[x]
     return (expanded)
 
-print
-print "============ Addition ============\n\n"
-additionWithPrint(A, B, "+")
-print
-print "============ Subtraction ============\n\n"
-additionWithPrint(A, B, "-")
-print
-print "============ Multiplication ============\n\n"
-print multiplication(A, B)
+def main():
+    A = raw_input("A(x): ")
+    B = raw_input("B(x): ")
+    P = raw_input("P(x): ")
+
+    A = A.split()
+    B = B.split()
+    P = P.split()
+
+    try:
+        A = simplifyList(getDegree2([int(a) for a in A]), [int(a) for a in A])
+        B = simplifyList(getDegree2([int(b) for b in B]), [int(b) for b in B])
+        P = simplifyList(getDegree2([int(p) for p in P]), [int(p) for p in P])
+    except ValueError:
+        print "Input must only contain integers."
+
+    choice = raw_input("Choose operation: ")
+    while choice != "q":
+
+        print "[a] Addition"
+        print "[s] Subtraction"
+        print "[m] Multiplication"
+        print "[d] Division"
+        print "[q] Quit"
+
+        if choice == 'a':
+            additionWithPrint(A, B, "+")
+        if choice == 's':
+            additionWithPrint(A, B, "-")
+        if choice == 'm':
+            multiplication(A, B, "mult")
+        if choice == 'd':
+            division(P,B)
+        choice = raw_input("Choose operation: ")
+main()
