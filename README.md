@@ -1,4 +1,4 @@
-# cs153projectc
+# CS 153 Galois Field Calculator of Aimee Nicole Gonzales
 Programming Language Used: Python 2.7.8
 
 Operating System Used in development: OS X El Capitan Version 10.11.3
