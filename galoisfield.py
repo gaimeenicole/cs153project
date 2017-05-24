@@ -98,45 +98,6 @@ def additionWithPrint(A,B,op):
             print result[x],
     print
     
-
-'''def additionWithPrint(A, B, op):
-        A = reverse(A)
-        B = reverse(B)
-        if len(A) > len(B):
-            result = addSupplement(A, B)
-        else:
-            result = addSupplement(B, A)
-        result = reverse(result)
-        A = reverse(A)
-        B = reverse(B)
-
-        m = getMaxLength(A, B, result)
-        A = expandList(m, A)
-        B = expandList(m, B)
-        result = expandList(m, result)
-        for x in range(len(A)):
-            if A[x] == -1:
-                print " ",
-            else:
-                print A[x],
-        print
-        B[0] = op
-        for x in range(len(B)):
-            if B[x] == -1:
-                print " ",
-            else:
-                print B[x],
-        print
-        for x in xrange(2*m+1):
-            print "_",
-        print
-        for x in range(len(result)):
-            if result[x] == -1:
-                print " ",
-            else:
-                print result[x],
-        print
-'''
 def addition(A, B):
     A = reverse(A)
     B = reverse(B)
