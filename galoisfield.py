@@ -1,3 +1,4 @@
+import os
 def simplifyList(degree, A):
     temp1 = [0 for x in xrange(degree+1)]
     for x in xrange(degree+1):
@@ -41,6 +42,23 @@ def printList (list):
                 print "+",
 
 def additionWithPrint(A,B,op):
+    aDeg = getDegree2(A)
+    bDeg = getDegree2(B)
+    pDeg = getDegree2(P)
+
+    '''if aDeg >= pDeg:
+        print "The degree of A is greater than or equal to P so it needs to be reduced."
+        aaa = multModulo(A, P)
+        while getDegree2(aaa) >= getDegree2(P):
+            aaa = multModulo(aaa, P)
+    if bDeg >= pDeg:
+        print "The degree of A is greater than or equal to P so it needs to be reduced."
+        bbb = multModulo(B, P)
+        while getDegree2(bbb) >= getDegree2(P):
+            bbb = multModulo(bbb, P)
+
+    A = copyList(aaa)
+    B = copyList(bbb)'''
     result = []
     A = reverse(A)
     B = reverse(B)
@@ -55,6 +73,7 @@ def additionWithPrint(A,B,op):
     m = getMaxLength(A, B, result)
     A = expandList(m, A)
     B = expandList(m, B)
+    r = copyList(result)
     result = expandList(m, result)
     for x in range(len(A)):
         if A[x] == -1:
@@ -78,8 +97,9 @@ def additionWithPrint(A,B,op):
         else:
             print result[x],
     print
+    
 
-def additionWithPrint(A, B, op):
+'''def additionWithPrint(A, B, op):
         A = reverse(A)
         B = reverse(B)
         if len(A) > len(B):
@@ -116,7 +136,7 @@ def additionWithPrint(A, B, op):
             else:
                 print result[x],
         print
-
+'''
 def addition(A, B):
     A = reverse(A)
     B = reverse(B)
@@ -211,7 +231,10 @@ def multiplication(A, B, mode):
         return prod
     else:
         print "\nSince the degree of the product", printList(prod), "is greater than or equal to the degree of the irreducible polynomial", printList(P), ", modulo reduction is needed. Using the irreducible polynomial,\n"
+
         prod = multModulo(prod, P)
+        while getDegree2(prod) >= getDegree2(P):
+            prod = multModulo(prod, P)
         print "The final answer is:",
         printList(prod)
         return prod
@@ -233,15 +256,48 @@ def multModulo(prod, P):
             temp1 = simplifyList(qDegree, P)
             print "x^"+str(getDegree2(P) + i), "=",
             for j in range(len(temp1)):
-                pos = (j - i ) % len(temp1)
                 temp2[j] = temp1[j]
             printList(temp2)
             print
             prodcopy = addition(prodcopy, temp2)
-    print "\nWe substitute the equations above to the original product and perform usual addition. \n"
+    print "\nWe substitute the equations above to and perform usual addition. \n"
     prodDeg = getDegree1(prodcopy)
     prodcopy = simplifyList(prodDeg, prodcopy)
+
     return prodcopy
+
+def reduceList(list, P):
+    l = copyList(list)
+    qDegree = getDegree2(P)
+    #while getDegree2(l) >= getDegree2(P):
+    l = copyList(l)
+    print l
+    coeffs = []
+    diff = len(l) - len(P)
+    print diff
+    for i in xrange(diff+1):
+        coeffs.append(l[i])
+        l[i] = 0
+
+        #print l[i]
+    coeffs = reverse(coeffs)
+    print coeffs
+    for i in range(len(coeffs)):
+        if coeffs[i] == 1:
+            temp2 = [0 for x in xrange(qDegree+i+1)]
+            temp1 = simplifyList(qDegree, P)
+            print "temp1",temp1
+            #print "x^"+str(getDegree2(P) + i), "=",
+            for j in range(len(temp1)):
+                temp2[j] = temp1[j]
+            print "temp2",temp2
+            print l
+            printList(temp2)
+            #print
+
+            l = addition(l, temp2)
+
+    #print l
 
 def division(P, B):
     S = copyList(P)
@@ -314,38 +370,58 @@ def expandList(max, list):
         expanded[(2*x)+(2*(max-len(list)+1))] = l[x]
     return (expanded)
 
-def main():
-    A = raw_input("A(x): ")
-    B = raw_input("B(x): ")
-    P = raw_input("P(x): ")
 
-    A = A.split()
-    B = B.split()
-    P = P.split()
+#def main():
+os.system('cls' if os.name == 'nt' else 'clear')
 
-    try:
-        A = simplifyList(getDegree2([int(a) for a in A]), [int(a) for a in A])
-        B = simplifyList(getDegree2([int(b) for b in B]), [int(b) for b in B])
-        P = simplifyList(getDegree2([int(p) for p in P]), [int(p) for p in P])
-    except ValueError:
-        print "Input must only contain integers."
+A = raw_input("A(x): ")
+B = raw_input("B(x): ")
+P = raw_input("P(x): ")
 
+A = A.split()
+B = B.split()
+P = P.split()
+
+try:
+    A = simplifyList(getDegree2([int(a) for a in A]), [int(a) for a in A])
+    B = simplifyList(getDegree2([int(b) for b in B]), [int(b) for b in B])
+    P = simplifyList(getDegree2([int(p) for p in P]), [int(p) for p in P])
+    print "Pasado"
+except ValueError:
+    print "Input must only contain integers."
+print A,B,P
+#multiplication(A, B, "mult")
+print
+print "[a] Addition"
+print "[s] Subtraction"
+print "[m] Multiplication"
+print "[d] Division"
+print "[q] Quit"
+choice = raw_input("Choose operation: ")
+while choice != "q":
+
+    if choice == 'a':
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print " ============= ADDITION ============="
+        additionWithPrint(A, B, "+")
+    if choice == 's':
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print " ============= SUBTRACTION ============="
+        additionWithPrint(A, B, "-")
+    if choice == 'm':
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print " ============= MULTIPLICATION ============="
+        multiplication(A, B, "mult")
+    if choice == 'd':
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print " ============= DIVISION ============="
+        division(P,B)
+    print
+    print
+    print "[a] Addition"
+    print "[s] Subtraction"
+    print "[m] Multiplication"
+    print "[d] Division"
+    print "[q] Quit"
+    print
     choice = raw_input("Choose operation: ")
-    while choice != "q":
-
-        print "[a] Addition"
-        print "[s] Subtraction"
-        print "[m] Multiplication"
-        print "[d] Division"
-        print "[q] Quit"
-
-        if choice == 'a':
-            additionWithPrint(A, B, "+")
-        if choice == 's':
-            additionWithPrint(A, B, "-")
-        if choice == 'm':
-            multiplication(A, B, "mult")
-        if choice == 'd':
-            division(P,B)
-        choice = raw_input("Choose operation: ")
-main()
